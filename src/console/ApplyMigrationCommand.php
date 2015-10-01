@@ -54,7 +54,8 @@ class ApplyMigrationCommand extends BaseMigrationCommand
 
             $this->runMigration(
                 $className,
-                $migration->up()
+                $migration->up(),
+                'up'
             );
 
             $this->setAppliedMigration($className);

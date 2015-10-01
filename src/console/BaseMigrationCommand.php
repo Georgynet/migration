@@ -50,10 +50,11 @@ abstract class BaseMigrationCommand extends Command
      * Выполняет запрос миграцию.
      * @param string $migrationName имя миграции
      * @param string $query запрос
+     * @param string $type тип миграции
      * @return bool|\Exception|\PDOException
      * @throw \RuntimeException в случае, если не удалось применить
      */
-    protected function runMigration($migrationName, $query)
+    protected function runMigration($migrationName, $query, $type = 'up')
     {
         if (empty($query)) {
             throw new \RuntimeException('В миграции отсутствует запрос');
@@ -69,7 +70,11 @@ abstract class BaseMigrationCommand extends Command
                 throw new \RuntimeException('Запрос не был выполнен');
             }
 
-            $this->addMigrationInfo($migrationName);
+            if ($type == 'up') {
+                $this->removeMigrationInfo($migrationName);
+            } else {
+                $this->addMigrationInfo($migrationName);
+            }
 
             $this->db->commit();
         } catch (\PDOException $e) {
@@ -102,24 +107,47 @@ abstract class BaseMigrationCommand extends Command
     }
 
     /**
+     * Удаляет информацию о примененной ранее миграции.
+     * @param string $migrationName имя удаляемой миграции
+     * @return bool
+     */
+    private function removeMigrationInfo($migrationName)
+    {
+        $statement = $this->db->prepare(
+            'DELETE FROM `' . $this->config['migration_table_name'] . '` WHERE `name` = :name'
+        );
+        $statement->bindParam('name', $migrationName);
+
+        $result = $statement->execute();
+        if (!$result) {
+            throw new \RuntimeException('Ошибка удаления миграции');
+        }
+
+        return $result;
+    }
+
+    /**
      * Возвращает список зафиксированных миграций.
      * @return array
      */
     protected function getAppliedMigration()
     {
+        if (!empty(self::$appliedMigration)) {
+            return self::$appliedMigration;
+        }
+
         $statement = $this->db->prepare(
-            'SELECT `name` FROM `' . $this->config['migration_table_name']
+            'SELECT `name` FROM `' . $this->config['migration_table_name'] . '` ORDER BY `id` ASC'
         );
 
         $statement->execute();
         $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
 
-        $migrations = [];
         foreach ($result as $migration) {
-            $migrations[$migration['name']] = 1;
+            self::$appliedMigration[$migration['name']] = 1;
         }
 
-        return $migrations;
+        return self::$appliedMigration;
     }
 
     /**
@@ -132,21 +160,29 @@ abstract class BaseMigrationCommand extends Command
     }
 
     /**
+     * Удаляет миграцию из список зафиксированных.
+     * @param string $migrationName имя миграции
+     */
+    protected function unsetAppliedMigration($migrationName)
+    {
+        if (isset(self::$appliedMigration[$migrationName])) {
+            unset(self::$appliedMigration[$migrationName]);
+        }
+    }
+
+    /**
      * Проверяет является ли класс миграцией.
      * @param SplFileInfo $file файл
      * @return bool|IMigration
      */
     protected function isMigration(SplFileInfo $file)
     {
-        if (empty($appliedMigration)) {
-            self::$appliedMigration = $this->getAppliedMigration();
-        }
-
-        if (isset(self::$appliedMigration[$file->getBasename('.php')])) {
+        $appliedMigration = $this->getAppliedMigration();
+        if (!isset($appliedMigration[$file->getBasename('.php')])) {
             return false;
         }
 
-        require $file->getPathname();
+        require_once $file->getPathname();
 
         $className = $file->getBasename('.php');
         $migration = new $className();
