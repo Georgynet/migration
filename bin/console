@@ -1,0 +1,11 @@
+<?php
+
+require_once dirname(__DIR__) . '/vendor/autoload.php';
+
+set_time_limit(0);
+
+use Symfony\Component\Console\Input\ArgvInput;
+
+$config = require dirname(__DIR__) . '/src/config/config.php';
+$console = require dirname(__DIR__) . '/src/console.php';
+$console->run();
