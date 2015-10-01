@@ -40,4 +40,57 @@ abstract class BaseMigrationCommand extends Command
 
         parent::__construct();
     }
+
+    /**
+     * Выполняет запрос миграцию.
+     * @param string $migrationName имя миграции
+     * @param string $query запрос
+     * @return bool|\Exception|\PDOException
+     * @throw \RuntimeException в случае, если не удалось применить
+     */
+    protected function runMigration($migrationName, $query)
+    {
+        if (empty($query)) {
+            throw new \RuntimeException('В миграции отсутствует запрос');
+        }
+
+        try {
+            $this->db->beginTransaction();
+
+            $statement = $this->db->prepare($query);
+            $result = $statement->execute();
+
+            if (!$result) {
+                throw new \RuntimeException('Запрос не был выполнен');
+            }
+
+            $this->addMigrationInfo($migrationName);
+
+            $this->db->commit();
+        } catch (\PDOException $e) {
+            $this->db->rollBack();
+
+            return $e;
+        }
+
+        return true;
+    }
+
+    /**
+     * Добавляет информацию о примененной миграции.
+     */
+    protected function addMigrationInfo($migrationName)
+    {
+        $sql = 'INSERT INTO `' . $this->config['migration_table_name'] . '` (`name`) VALUES (:name)';
+
+        $statement = $this->db->prepare($sql);
+        $statement->bindParam('name', $migrationName);
+
+        $result = $statement->execute();
+        if (!$result) {
+            throw new \RuntimeException('Ошибка фиксации миграции');
+        }
+
+        return $result;
+    }
 }

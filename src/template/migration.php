@@ -6,8 +6,11 @@
  * Time: 11:18
  */
 
-return '<?php' . "\n" .
-'class ' . $migrationName . '
+return '<?php' . "\n" . '
+
+use Sllite\console\IMigration;
+
+class ' . $migrationName . ' implements IMigration
 {
     public function up()
     {

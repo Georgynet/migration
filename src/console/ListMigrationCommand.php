@@ -34,7 +34,8 @@ class ListMigrationCommand extends BaseMigrationCommand
         $finder = new Finder();
         $finder
             ->name(BaseMigrationCommand::PREFIX_MIGRATION_NAME . '*' . '.php')
-            ->in($this->config['migration_path']);
+            ->in($this->config['migration_path'])
+            ->sortByName();
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
             $output->writeln(
