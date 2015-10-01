@@ -52,7 +52,7 @@ class MigrationApp
         /** @var array $config */
         $this->console->add(new InitMigrationCommand($this->config, $this->db));
         $this->console->add(new NewMigrationCommand($this->config));
-        $this->console->add(new ListMigrationCommand($this->config));
+        $this->console->add(new ListMigrationCommand($this->config, $this->db));
         $this->console->add(new ApplyMigrationCommand($this->config, $this->db));
     }
 }

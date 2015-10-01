@@ -36,8 +36,14 @@ class ListMigrationCommand extends BaseMigrationCommand
             ->name(BaseMigrationCommand::PREFIX_MIGRATION_NAME . '*' . '.php')
             ->in($this->config['migration_path'])
             ->sortByName();
+
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
+
+            if (!$this->isMigration($file) instanceof IMigration) {
+                continue;
+            }
+
             $output->writeln(
                 $file->getBasename('.php')
             );

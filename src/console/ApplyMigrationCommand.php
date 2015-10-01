@@ -41,14 +41,12 @@ class ApplyMigrationCommand extends BaseMigrationCommand
 
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
-            require $file->getPathname();
 
-            $className = $file->getBasename('.php');
-            $migration = new $className();
-
-            if (!$migration instanceof IMigration) {
+            if (!$migration = $this->isMigration($file)) {
                 continue;
             }
+
+            $className = $file->getBasename('.php');
 
             $output->writeln(
                 'Запущена миграция: ' . $className

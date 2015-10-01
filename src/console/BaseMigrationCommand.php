@@ -9,6 +9,7 @@
 namespace Sllite\console;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Базовый класс консольных комманд миграции.
@@ -28,6 +29,10 @@ abstract class BaseMigrationCommand extends Command
      * @var \PDO $db подключение к БД
      */
     protected $db;
+    /**
+     * @var array список примененных миграций
+     */
+    static protected $appliedMigration = [];
 
     /**
      * {@inheritdoc}
@@ -78,12 +83,14 @@ abstract class BaseMigrationCommand extends Command
 
     /**
      * Добавляет информацию о примененной миграции.
+     * @param string $migrationName имя фиксируемой миграции
+     * @return bool
      */
     protected function addMigrationInfo($migrationName)
     {
-        $sql = 'INSERT INTO `' . $this->config['migration_table_name'] . '` (`name`) VALUES (:name)';
-
-        $statement = $this->db->prepare($sql);
+        $statement = $this->db->prepare(
+            'INSERT INTO `' . $this->config['migration_table_name'] . '` (`name`) VALUES (:name)'
+        );
         $statement->bindParam('name', $migrationName);
 
         $result = $statement->execute();
@@ -92,5 +99,52 @@ abstract class BaseMigrationCommand extends Command
         }
 
         return $result;
+    }
+
+    /**
+     * Возвращает список зафиксированных миграций.
+     */
+    protected function getAppliedMigration()
+    {
+        $statement = $this->db->prepare(
+            'SELECT `name` FROM `' . $this->config['migration_table_name']
+        );
+
+        $statement->execute();
+        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
+        $migrations = [];
+        foreach ($result as $migration) {
+            $migrations[$migration['name']] = 1;
+        }
+
+        return $migrations;
+    }
+
+    /**
+     * Проверяет является ли класс миграцией.
+     * @param SplFileInfo $file файл
+     * @return bool|IMigration
+     */
+    protected function isMigration(SplFileInfo $file)
+    {
+        if (empty($appliedMigration)) {
+            self::$appliedMigration = $this->getAppliedMigration();
+        }
+
+        if (isset(self::$appliedMigration[$file->getBasename('.php')])) {
+            return false;
+        }
+
+        require $file->getPathname();
+
+        $className = $file->getBasename('.php');
+        $migration = new $className();
+
+        if (!$migration instanceof IMigration) {
+            return false;
+        }
+
+        return $migration;
     }
 }
