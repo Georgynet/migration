@@ -1,4 +1,9 @@
 {
+    "name": "Georgynet/migration",
+    "type": "library",
+    "description": "Migration DB",
+    "keywords": ["migrations", "database"],
+    "homepage": "http://sllite.ru",
     "require": {
         "symfony/console": "^2.7",
         "symfony/finder": "^2.7"
