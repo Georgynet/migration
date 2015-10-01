@@ -42,6 +42,11 @@ class ApplyMigrationCommand extends BaseMigrationCommand
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
 
+            $appliedMigration = $this->getAppliedMigration();
+            if (isset($appliedMigration[$file->getBasename('.php')])) {
+                continue;
+            }
+
             if (!$migration = $this->isMigration($file)) {
                 continue;
             }

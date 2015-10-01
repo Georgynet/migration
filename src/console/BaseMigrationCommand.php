@@ -71,9 +71,9 @@ abstract class BaseMigrationCommand extends Command
             }
 
             if ($type == 'up') {
-                $this->removeMigrationInfo($migrationName);
-            } else {
                 $this->addMigrationInfo($migrationName);
+            } else {
+                $this->removeMigrationInfo($migrationName);
             }
 
             $this->db->commit();
@@ -128,16 +128,17 @@ abstract class BaseMigrationCommand extends Command
 
     /**
      * Возвращает список зафиксированных миграций.
+     * @param string $order направление сортировки
      * @return array
      */
-    protected function getAppliedMigration()
+    protected function getAppliedMigration($order = 'ASC')
     {
         if (!empty(self::$appliedMigration)) {
             return self::$appliedMigration;
         }
 
         $statement = $this->db->prepare(
-            'SELECT `name` FROM `' . $this->config['migration_table_name'] . '` ORDER BY `id` ASC'
+            'SELECT `name` FROM `' . $this->config['migration_table_name'] . '` ORDER BY `id` ' . $order
         );
 
         $statement->execute();
@@ -177,11 +178,6 @@ abstract class BaseMigrationCommand extends Command
      */
     protected function isMigration(SplFileInfo $file)
     {
-        $appliedMigration = $this->getAppliedMigration();
-        if (!isset($appliedMigration[$file->getBasename('.php')])) {
-            return false;
-        }
-
         require_once $file->getPathname();
 
         $className = $file->getBasename('.php');

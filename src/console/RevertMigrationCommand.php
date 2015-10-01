@@ -38,7 +38,7 @@ class RevertMigrationCommand extends BaseMigrationCommand
             $step = 1;
         }
 
-        $appliedMigrations = $this->getAppliedMigration();
+        $appliedMigrations = $this->getAppliedMigration('DESC');
 
         $i = 0;
         foreach ($appliedMigrations as $appliedMigration => $v) {
@@ -51,6 +51,11 @@ class RevertMigrationCommand extends BaseMigrationCommand
                     ->name($appliedMigration . '.php')
                     ->in($this->config['migration_path'])
             ))[0];
+
+            $appliedMigration = $this->getAppliedMigration();
+            if (!isset($appliedMigration[$file->getBasename('.php')])) {
+                continue;
+            }
 
             if (!$migration = $this->isMigration($file)) {
                 continue;
@@ -65,7 +70,7 @@ class RevertMigrationCommand extends BaseMigrationCommand
             $this->runMigration(
                 $className,
                 $migration->down(),
-                'up'
+                'down'
             );
 
             $this->unsetAppliedMigration($className);
