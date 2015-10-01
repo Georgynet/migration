@@ -1,8 +1,11 @@
 # Механизм миграций для БД
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Georgynet/migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Georgynet/migration/?branch=master)
+[![Code Climate](https://codeclimate.com/github/Georgynet/migration/badges/gpa.svg)](https://codeclimate.com/github/Georgynet/migration)
+
 Простой механизм реализующий просмотр списка доступных миграций. Применять и откатывать миграции можно пошагово.
 
-Для использования необходимо создать экземпляр класса MigrationApp, передать ему консольное приложение, подключение к БД и конфиг.
+Для использования необходимо создать экземпляр класса ```MigrationApp```, передать ему консольное приложение, подключение к БД и конфиг.
 
 Пример конфига:
 
