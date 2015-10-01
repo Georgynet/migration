@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "66914305e84ae54016d07e999e45786b",
+    "hash": "0c2ab8c535e3c06fd8b0f3a7499c1a3f",
     "packages": [
         {
             "name": "symfony/console",

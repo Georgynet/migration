@@ -1,5 +1,5 @@
 {
-    "name": "Georgynet/migration",
+    "name": "georgynet/migration",
     "type": "library",
     "description": "Migration DB",
     "keywords": ["migrations", "database"],
