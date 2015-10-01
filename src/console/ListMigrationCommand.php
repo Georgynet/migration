@@ -40,6 +40,11 @@ class ListMigrationCommand extends BaseMigrationCommand
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
 
+            $appliedMigration = $this->getAppliedMigration();
+            if (isset($appliedMigration[$file->getBasename('.php')])) {
+                continue;
+            }
+
             if (!$this->isMigration($file) instanceof IMigration) {
                 continue;
             }

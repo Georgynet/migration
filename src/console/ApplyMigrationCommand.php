@@ -33,12 +33,18 @@ class ApplyMigrationCommand extends BaseMigrationCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $name = $input->getArgument('name');
+        if (is_numeric($name)) {
+            $name = (int) $name;
+        }
+
         $finder = new Finder();
         $finder
             ->name(BaseMigrationCommand::PREFIX_MIGRATION_NAME . '*' . '.php')
             ->in($this->config['migration_path'])
             ->sortByName();
 
+        $i = 0;
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
 
@@ -50,6 +56,8 @@ class ApplyMigrationCommand extends BaseMigrationCommand
             if (!$migration = $this->isMigration($file)) {
                 continue;
             }
+
+            ++$i;
 
             $className = $file->getBasename('.php');
 
@@ -68,6 +76,10 @@ class ApplyMigrationCommand extends BaseMigrationCommand
             $output->writeln(
                 'Применена миграция: ' . $className
             );
+
+            if (!is_null($name) && ($className == $name || $name === $i)) {
+                break;
+            }
         }
     }
 }

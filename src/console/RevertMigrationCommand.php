@@ -25,7 +25,7 @@ class RevertMigrationCommand extends BaseMigrationCommand
             ->setName('migrate:down')
             ->setDescription('Отменяет миграцию')
             ->addArgument(
-                'step',
+                'name',
                 InputArgument::OPTIONAL,
                 'Количество отменяемых миграций'
             );
@@ -33,16 +33,15 @@ class RevertMigrationCommand extends BaseMigrationCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $step = (int) $input->getArgument('step');
-        if (!is_numeric($step) || 0 === $step) {
-            $step = 1;
+        $name = $input->getArgument('name');
+        if (is_numeric($name)) {
+            $name = (int) $name;
         }
 
         $appliedMigrations = $this->getAppliedMigration('DESC');
 
         $i = 0;
         foreach ($appliedMigrations as $appliedMigration => $v) {
-            ++$i;
 
             $finder = new Finder();
             /** @var SplFileInfo $file */
@@ -60,6 +59,8 @@ class RevertMigrationCommand extends BaseMigrationCommand
             if (!$migration = $this->isMigration($file)) {
                 continue;
             }
+
+            ++$i;
 
             $className = $file->getBasename('.php');
 
@@ -79,7 +80,7 @@ class RevertMigrationCommand extends BaseMigrationCommand
                 'Отменена миграция: ' . $className
             );
 
-            if ($step === $i) {
+            if (!is_null($name) && ($className == $name || $name === $i)) {
                 break;
             }
         }
