@@ -103,6 +103,7 @@ abstract class BaseMigrationCommand extends Command
 
     /**
      * Возвращает список зафиксированных миграций.
+     * @return array
      */
     protected function getAppliedMigration()
     {
@@ -119,6 +120,15 @@ abstract class BaseMigrationCommand extends Command
         }
 
         return $migrations;
+    }
+
+    /**
+     * Добавяет миграцию в список зафиксированных.
+     * @param string $migrationName имя миграции
+     */
+    protected function setAppliedMigration($migrationName)
+    {
+        self::$appliedMigration[$migrationName] = 1;
     }
 
     /**

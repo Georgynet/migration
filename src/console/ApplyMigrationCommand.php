@@ -57,6 +57,8 @@ class ApplyMigrationCommand extends BaseMigrationCommand
                 $migration->up()
             );
 
+            $this->setAppliedMigration($className);
+
             $output->writeln(
                 'Применена миграция: ' . $className
             );
