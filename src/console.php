@@ -8,6 +8,7 @@
 
 namespace Sllite;
 
+use Sllite\console\ListMigrationCommand;
 use Sllite\console\NewMigrationCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,5 +18,6 @@ $console->getDefinition()->addOption(new InputOption('--env', '-e', InputOption:
 
 /** @var array $config */
 $console->add(new NewMigrationCommand($config));
+$console->add(new ListMigrationCommand($config));
 
 return $console;
