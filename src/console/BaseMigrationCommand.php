@@ -16,17 +16,27 @@ use Symfony\Component\Console\Command\Command;
 abstract class BaseMigrationCommand extends Command
 {
     /**
+     * Префикс миграций
+     */
+    const PREFIX_MIGRATION_NAME = 'm_';
+
+    /**
      * @var array конфигурационный файл
      */
     protected $config;
+    /**
+     * @var \PDO $db подключение к БД
+     */
+    protected $db;
 
     /**
      * {@inheritdoc}
      * @param array $config конфигурационный файл
      */
-    public function __construct($config = [])
+    public function __construct($config = [], \PDO $db = null)
     {
         $this->config = $config;
+        $this->db = $db;
 
         parent::__construct();
     }

@@ -17,8 +17,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class NewMigrationCommand extends BaseMigrationCommand
 {
-    const PREFIX_MIGRATION_NAME = 'm_';
-
     protected function configure()
     {
         $this
@@ -34,15 +32,24 @@ class NewMigrationCommand extends BaseMigrationCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $migrationName = self::PREFIX_MIGRATION_NAME . date('Y-m-d_H-i-s');
+        $migrationName = BaseMigrationCommand::PREFIX_MIGRATION_NAME . date('Ymd_His');
 
         $name = $input->getArgument('name');
         if ($name) {
             $migrationName = $migrationName .'_' . $name;
         }
 
-        var_dump($this->config);
+        if (!file_exists($this->config['migration_path'])) {
+            mkdir($this->config['migration_path'], 0755, true);
+        }
 
-        $output->writeln($migrationName);
+        $migrationClass = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'template' . DIRECTORY_SEPARATOR . 'migration.php';
+
+        file_put_contents(
+            $this->config['migration_path'] . DIRECTORY_SEPARATOR . $migrationName . '.php',
+            $migrationClass
+        );
+
+        $output->writeln('Создана миграция: ' . $migrationName);
     }
 }

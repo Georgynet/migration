@@ -1,0 +1,22 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: georg
+ * Date: 01.10.15
+ * Time: 11:18
+ */
+
+return '<?php' . "\n" .
+'class ' . $migrationName . '
+{
+    public function up()
+    {
+        // up migration
+    }
+
+    public function down()
+    {
+        // down migration
+    }
+}
+';

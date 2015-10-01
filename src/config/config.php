@@ -7,5 +7,6 @@
  */
 
 return [
-    'migration_path' => dirname(dirname(__DIR__)) . '/migrations'
+    'migration_path' => dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'migrations',
+    'migration_table_name' => 'migration_table'
 ];
