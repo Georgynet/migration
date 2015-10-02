@@ -15,3 +15,8 @@ before_install:
 install:
   - composer install
 
+script: phpunit --configuration /home/georgy/htdocs/migration/www/phpunit.xml --coverage-clover=coverage.clover
+
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
