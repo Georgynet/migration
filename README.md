@@ -3,6 +3,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Georgynet/migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Georgynet/migration/?branch=master)
 [![Code Climate](https://codeclimate.com/github/Georgynet/migration/badges/gpa.svg)](https://codeclimate.com/github/Georgynet/migration)
 [![Build Status](https://travis-ci.org/Georgynet/migration.svg?branch=master)](https://travis-ci.org/Georgynet/migration)
+[![Code Coverage](https://scrutinizer-ci.com/g/Georgynet/migration/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Georgynet/migration/?branch=master)
 
 Простой механизм реализующий просмотр списка доступных миграций. Применять и откатывать миграции можно пошагово.
 
