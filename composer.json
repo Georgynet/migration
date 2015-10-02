@@ -14,7 +14,7 @@
     "autoload": {
         "psr-4": {
             "Sllite\\": "src/",
-            "Sllite\\test\\": "src/test/"
+            "Sllite\\tests\\": "src/tests/"
         }
     }
 }

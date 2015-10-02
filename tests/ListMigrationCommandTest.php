@@ -6,7 +6,7 @@
  * Time: 9:34
  */
 
-namespace Sllite\test;
+namespace Sllite\tests;
 
 use Sllite\console\ListMigrationCommand;
 use Symfony\Component\Console\Application;

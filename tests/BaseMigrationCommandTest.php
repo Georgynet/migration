@@ -6,7 +6,7 @@
  * Time: 9:50
  */
 
-namespace Sllite\test;
+namespace Sllite\tests;
 
 use PHPUnit_Framework_TestCase;
 

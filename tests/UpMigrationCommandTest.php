@@ -6,7 +6,7 @@
  * Time: 14:55
  */
 
-namespace Sllite\test;
+namespace Sllite\tests;
 
 use Sllite\console\ApplyMigrationCommand;
 use Symfony\Component\Console\Application;
