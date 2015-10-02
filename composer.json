@@ -8,9 +8,13 @@
         "symfony/console": "^2.7",
         "symfony/finder": "^2.7"
     },
+    "require-dev" : {
+        "phpunit/phpunit" : "^4.8"
+    },
     "autoload": {
         "psr-4": {
-            "Sllite\\": "src/"
+            "Sllite\\": "src/",
+            "Sllite\\test\\": "src/test/"
         }
     }
 }

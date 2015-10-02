@@ -32,7 +32,7 @@ abstract class BaseMigrationCommand extends Command
     /**
      * @var array список примененных миграций
      */
-    static protected $appliedMigration = [];
+    protected $appliedMigration = [];
 
     /**
      * {@inheritdoc}
@@ -133,8 +133,8 @@ abstract class BaseMigrationCommand extends Command
      */
     protected function getAppliedMigration($order = 'ASC')
     {
-        if (!empty(self::$appliedMigration)) {
-            return self::$appliedMigration;
+        if (!empty($this->appliedMigration)) {
+            return $this->appliedMigration;
         }
 
         $statement = $this->db->prepare(
@@ -145,10 +145,10 @@ abstract class BaseMigrationCommand extends Command
         $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($result as $migration) {
-            self::$appliedMigration[$migration['name']] = 1;
+            $this->appliedMigration[$migration['name']] = 1;
         }
 
-        return self::$appliedMigration;
+        return $this->appliedMigration;
     }
 
     /**
@@ -157,7 +157,7 @@ abstract class BaseMigrationCommand extends Command
      */
     protected function setAppliedMigration($migrationName)
     {
-        self::$appliedMigration[$migrationName] = 1;
+        $this->appliedMigration[$migrationName] = 1;
     }
 
     /**
@@ -166,8 +166,8 @@ abstract class BaseMigrationCommand extends Command
      */
     protected function unsetAppliedMigration($migrationName)
     {
-        if (isset(self::$appliedMigration[$migrationName])) {
-            unset(self::$appliedMigration[$migrationName]);
+        if (isset($this->appliedMigration[$migrationName])) {
+            unset($this->appliedMigration[$migrationName]);
         }
     }
 
