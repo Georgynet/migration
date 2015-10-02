@@ -93,17 +93,11 @@ abstract class BaseMigrationCommand extends Command
      */
     protected function addMigrationInfo($migrationName)
     {
-        $statement = $this->db->prepare(
-            'INSERT INTO `' . $this->config['migration_table_name'] . '` (`name`) VALUES (:name)'
+        return $this->updateMigrationInfo(
+            'INSERT INTO `' . $this->config['migration_table_name'] . '` (`name`) VALUES (:name)',
+            $migrationName,
+            'Ошибка фиксации миграции'
         );
-        $statement->bindParam('name', $migrationName);
-
-        $result = $statement->execute();
-        if (!$result) {
-            throw new \RuntimeException('Ошибка фиксации миграции');
-        }
-
-        return $result;
     }
 
     /**
@@ -113,14 +107,28 @@ abstract class BaseMigrationCommand extends Command
      */
     private function removeMigrationInfo($migrationName)
     {
-        $statement = $this->db->prepare(
-            'DELETE FROM `' . $this->config['migration_table_name'] . '` WHERE `name` = :name'
+        return $this->updateMigrationInfo(
+            'DELETE FROM `' . $this->config['migration_table_name'] . '` WHERE `name` = :name',
+            $migrationName,
+            'Ошибка удаления миграции'
         );
+    }
+
+    /**
+     * Обновляет данные о миграции
+     * @param string $query запрос
+     * @param string $migrationName имя миграции
+     * @param string $message сообщение об ошибке
+     * @return bool
+     */
+    private function updateMigrationInfo($query, $migrationName, $message)
+    {
+        $statement = $this->db->prepare($query);
         $statement->bindParam('name', $migrationName);
 
         $result = $statement->execute();
         if (!$result) {
-            throw new \RuntimeException('Ошибка удаления миграции');
+            throw new \RuntimeException($message);
         }
 
         return $result;
