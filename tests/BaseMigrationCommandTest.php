@@ -39,13 +39,16 @@ abstract class BaseMigrationCommandTest extends PHPUnit_Framework_TestCase
 
         $migrations = [
             'm_1' => [
-                'upSql' => 'return \'CREATE TABLE IF NOT EXISTS `table_test` (`id` INT UNSIGNED NOT NULL, `name` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`));\';'
+                'upSql' => 'return \'CREATE TABLE IF NOT EXISTS `table_test` (`id` INT UNSIGNED NOT NULL, `name` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`));\';',
+                'downSql' => 'return \'INSERT INTO `table_test` (`id`, `name`) VALUES (2, "m_2");\';'
             ],
             'm_2' => [
-                'upSql' => 'return \'INSERT INTO `table_test` (`id`, `name`) VALUES (1, "m_1");\';'
+                'upSql' => 'return \'INSERT INTO `table_test` (`id`, `name`) VALUES (1, "m_1");\';',
+                'downSql' => 'return \'INSERT INTO `table_test` (`id`, `name`) VALUES (1, "m_1");\';'
             ],
             'm_3' => [
-                'upSql' => 'return \'INSERT INTO `table_test` (`id`, `name`) VALUES (2, "m_2");\';'
+                'upSql' => 'return \'INSERT INTO `table_test` (`id`, `name`) VALUES (2, "m_2");\';',
+                'downSql' => 'return \'CREATE TABLE IF NOT EXISTS `table_test` (`id` INT UNSIGNED NOT NULL, `name` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`));\';'
             ]
         ];
 
@@ -127,7 +130,7 @@ abstract class BaseMigrationCommandTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public static function applyMigrations()
+    public static function useMigrations()
     {
         return [
             [
@@ -143,5 +146,27 @@ abstract class BaseMigrationCommandTest extends PHPUnit_Framework_TestCase
                 'method' => 'existRow'
             ]
         ];
+    }
+
+    protected function existTable($query)
+    {
+        try {
+            $statement = self::$dbh->prepare($query);
+            $statement->execute();
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function existRow($query)
+    {
+        $statement = self::$dbh->prepare($query);
+        $statement->execute();
+
+        $result = $statement->fetchAll();
+
+        return (isset($result[0]['cnt']) && 1 === (int) $result[0]['cnt'] );
     }
 }
