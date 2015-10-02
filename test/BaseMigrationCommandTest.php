@@ -37,7 +37,20 @@ abstract class BaseMigrationCommandTest extends PHPUnit_Framework_TestCase
             mkdir($migrationPath, 0755, true);
         }
 
-        foreach (['m_1', 'm_2', 'm_3'] as $migrationName) {
+        $migrations = [
+            'm_1' => [
+                'upSql' => 'return \'CREATE TABLE IF NOT EXISTS `table_test` (`id` INT UNSIGNED NOT NULL, `name` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`));\';'
+            ],
+            'm_2' => [
+                'upSql' => 'return \'INSERT INTO `table_test` (`id`, `name`) VALUES (1, "m_1");\';'
+            ],
+            'm_3' => [
+                'upSql' => 'return \'INSERT INTO `table_test` (`id`, `name`) VALUES (2, "m_2");\';'
+            ]
+        ];
+
+        foreach ($migrations as $migrationName => $migrationValue) {
+            extract($migrationValue);
             $migrationFile = include __DIR__ . '/fixtures/migrationTemplate.php';
             file_put_contents(
                 $migrationPath . '/' . $migrationName . '.php',
@@ -110,6 +123,24 @@ abstract class BaseMigrationCommandTest extends PHPUnit_Framework_TestCase
             [
                 'query' => 'DELETE FROM `migration_table`;',
                 'result' => "m_1\nm_2\nm_3\n",
+            ]
+        ];
+    }
+
+    public static function applyMigrations()
+    {
+        return [
+            [
+                'query' => 'SELECT * FROM `table_test`;',
+                'method' => 'existTable'
+            ],
+            [
+                'query' => 'SELECT count(1) `cnt` FROM `table_test` WHERE `name` = "m_1";',
+                'method' => 'existRow'
+            ],
+            [
+                'query' => 'SELECT count(1) `cnt` FROM `table_test` WHERE `name` = "m_2";',
+                'method' => 'existRow'
             ]
         ];
     }
