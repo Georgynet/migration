@@ -19,7 +19,9 @@ class DownMigrationCommandTest extends BaseMigrationCommandTest
         parent::setUpBeforeClass();
 
         self::$dbh->exec(
-            'INSERT INTO `migration_table` (`id`, `name`) VALUES (1, "m_1"), (2, "m_2"), (3, "m_3");'
+            'INSERT INTO `migration_table` (`id`, `name`) VALUES (1, "m_1");
+            INSERT INTO `migration_table` (`id`, `name`) VALUES (2, "m_2");
+            INSERT INTO `migration_table` (`id`, `name`) VALUES (3, "m_3");'
         );
     }
 
