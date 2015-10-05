@@ -6,7 +6,7 @@
  * Time: 11:18
  */
 
-return '<?php' . "\n" . '
+return '<?php
 
 use Sllite\console\IMigration;
 
