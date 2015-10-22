@@ -70,6 +70,8 @@ abstract class BaseMigrationCommand extends Command
                 throw new \RuntimeException('Запрос не был выполнен');
             }
 
+            $statement->closeCursor();
+
             if ($type == 'up') {
                 $this->addMigrationInfo($migrationName);
             } else {
