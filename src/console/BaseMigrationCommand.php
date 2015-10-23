@@ -82,7 +82,7 @@ abstract class BaseMigrationCommand extends Command
         } catch (\PDOException $e) {
             $this->db->rollBack();
 
-            return $e;
+            throw $e;
         }
 
         return true;
