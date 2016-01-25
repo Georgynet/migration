@@ -23,7 +23,7 @@ abstract class BaseMigrationCommandTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         self::$dbh = new \PDO('sqlite::memory:', '', '', array(
-            \PDO::ATTR_PERSISTENT => true,
+            \PDO::ATTR_PERSISTENT => false,
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
         ));
 
